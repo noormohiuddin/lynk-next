@@ -1,0 +1,35 @@
+version: "0.1"
+global_environment_variables:
+  MY_ENV_VAR: "dev"
+
+source:
+  directory: /app
+  git:
+    url: "https://devops.scmservice.ca-toronto-1.oci.oraclecloud.com/namespaces/yztltrcuhaiu/projects/lynk/repositories/lynk-next"
+    branch: "main"
+
+phases:
+  pre_build:
+    commands:
+      - echo 'Installing dependencies...'
+      - curl -sL https://deb.nodesource.com/setup_14.x | bash -
+      - apt-get install -y nodejs
+      - node -v
+      - npm -v
+      - cd /app
+      - npm install
+      - npm install -g next
+  build:
+    commands:
+      - echo 'Building the Next.js app...'
+      - next build
+  post_build:
+    commands:
+      - echo 'Post build phase...'
+      - next export
+
+artifacts:
+  files:
+    - '**/*'
+  base_directory: '/app/out'
+  working_directory: '/app'
